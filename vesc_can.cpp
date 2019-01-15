@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include "mcp_can.h"
 #include "buffer.c"
+#include "bldc_interface.c"
 
 //Define CAN_message_t
 typedef struct CAN_message_t {
@@ -22,13 +23,12 @@ can_status_msg stat_msgs[CAN_STATUS_MSGS_TO_STORE];
 
 //Create a MCP_CAN instance
 int spiPin = 10;
-int intPin = 2;
 MCP_CAN CAN(spiPin);
 
 //CAN Begin
 void vesc_can_begin()
 {  
-  Serial.begin(115200); //Start serial for debugging
+  Serial.begin(115200);       //Start serial for debugging
   
   // Initialize MCP2515 running at 8MHz with a baudrate of 250kb/s and the masks and filters disabled.
   if(CAN.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ) == CAN_OK)
@@ -197,9 +197,44 @@ int vesc_can_read() {
   }
   return 1;
 
-
-
 }
+
+/**
+ * Get status message by index.
+ *
+ * @param index
+ * Index in the array
+ *
+ * @return
+ * The message or 0 for an invalid index.
+ */
+can_status_msg *comm_can_get_status_msg_index(int index) {
+  if (index < CAN_STATUS_MSGS_TO_STORE) {
+    return &stat_msgs[index];
+  } else {
+    return 0;
+  }
+}
+
+/**
+ * Get status message by id.
+ *
+ * @param id
+ * Id of the controller that sent the status message.
+ *
+ * @return
+ * The message or 0 for an invalid id.
+ */
+can_status_msg *comm_can_get_status_msg_id(int id) {
+  for (int i = 0;i < CAN_STATUS_MSGS_TO_STORE;i++) {
+    if (stat_msgs[i].id == id) {
+      return &stat_msgs[i];
+    }
+  }
+
+  return 0;
+}
+
 
 
 //Helper methods

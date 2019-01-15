@@ -16,20 +16,16 @@ void setup()
 {
   //Setup
   vesc_can_begin();
+  Serial.begin(115200);
 }
 
 
 void loop()
 {
-  //Loop
-  for (int i = 0; i < 10; i++)
-  {
-    comm_can_set_rpm(0x00, 2000.0);
-    delay(200);
-  }
-  for (int i = 0; i < 10; i++)
-  {
-    comm_can_set_rpm(0x00, 4000.0);
-    delay(200);
-  }
+  comm_can_set_current(0x00, 2.0);
+
+  //Read CAN status
+  vesc_can_read();
+  Serial.println(comm_can_get_status_msg_id(0)->rpm);
+  delay(100);
 }

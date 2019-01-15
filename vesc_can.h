@@ -1,11 +1,10 @@
 #include "datatypes.h"
-#include "buffer.h"
-#include "bldc_interface.h"
 #include <String.h>
 
-#define RX_BUFFER_SIZE 1024
-#define CAN_STATUS_MSGS_TO_STORE 10 // The number of status Messages to store
+#define RX_BUFFER_SIZE 128
+#define CAN_STATUS_MSGS_TO_STORE 2 // The number of status Messages to store
 
+//Setters
 void vesc_can_begin();
 void vesc_can_set_duty(uint8_t controller_id, float duty);
 void comm_can_set_current(uint8_t controller_id, float current);
@@ -67,3 +66,7 @@ typedef struct {
   float current;
   float duty;
 } can_status_msg;
+
+//Getters
+can_status_msg *comm_can_get_status_msg_index(int index);
+can_status_msg *comm_can_get_status_msg_id(int id);
